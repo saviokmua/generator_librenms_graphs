@@ -5,7 +5,7 @@ class Generator
     require 'json'
     require 'addressable/uri'
     require 'byebug'
-    require './config'
+    require_relative  'config'
     @url = "http://#{ENV['api_host']}/api/v0/"
     @headers = {'X-Auth-Token': ENV['api_key']}
     @path = "/opt/librenms/rrd/graphs/"
