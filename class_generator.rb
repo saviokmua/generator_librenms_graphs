@@ -2,6 +2,7 @@
 class Generator
   def initialize
     require 'rest-client'
+    require 'open-uri'
     require 'json'
     require 'addressable/uri'
     require 'byebug'
@@ -23,9 +24,13 @@ class Generator
     devices
   end
 
+  def post(url, data, to_json = true)
+    RestClient.post("#{@url}#{url}", data, @headers)
+  end
+
   def get_device_ports hostname
     ports = []
-    get("devices/#{hostname}/ports")['ports'].map{|v,k| ports << v['ifName']}
+    get("devices/#{hostname}/ports")['ports'].map{ |v| ports <<  v['ifName']}
     ports
   end
 
@@ -45,11 +50,11 @@ class Generator
       uri.query_values = params
       params = '?'+uri.query
     end    
-    api_url = "devices/#{hostname}/ports/#{port}/port_bits#{params}"
+    api_url = "devices/#{hostname}/ports/#{URI::encode(port).gsub('/','%2F')}/port_bits#{params}"
     puts "API:#{api_url}"
     graph = get(api_url,false)
 
-    filename = "#{@path}#{hostname}_#{port}_#{period}.png"
+    filename = "#{@path}#{hostname}_#{port.gsub('Port','').gsub('1/','').gsub(' ','')}_#{period}.png"
     File.open(filename, 'w') { |file| file.write(graph) }
   end
 end

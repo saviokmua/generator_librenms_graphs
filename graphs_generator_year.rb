@@ -1,4 +1,4 @@
-require 'class_generator'
+require_relative 'class_generator'
 
 g = Generator.new
 g.get_devices.each do |hostname|
